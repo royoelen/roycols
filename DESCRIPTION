@@ -1,0 +1,5 @@
+Package: roycols
+Type: Package
+Title: quick color mapping utility
+Version: 0.0.0.1
+RoxygenNote: 7.3.2
