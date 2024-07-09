@@ -11,7 +11,7 @@
 #' @export
 sample_many_colours <- function(number_of_colours, use_sampling=F, color_indices=NULL) {
   # get all colours from the 'quality' palettes
-  quality_colour_palettes <-  RColorBrewer::brewer.pal.info[brewer.pal.info[['category']] == 'qual', ]
+  quality_colour_palettes <-  RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info[['category']] == 'qual', ]
   # save each palette
   colours_per_palette <- list()
   # apply over each palette
