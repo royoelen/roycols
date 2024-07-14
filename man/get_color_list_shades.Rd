@@ -18,5 +18,5 @@ a list of each input value as name, and values of colours
 get a vector of as distinct possible colours, but with more possibilities ()
 }
 \examples{
-get_color_list_shades(c('A', 'B', 'A', 'C', 'B'), F, c(3,4,5))
+get_color_list_shades(c('A', 'B', 'A', 'C', 'B'), shades_from = c('lavender', 'darkviolet'))
 }

@@ -265,7 +265,7 @@ plot_shades <- function(number_of_colours, shades_from) {
 #' @returns a list of each input value as name, and values of colours
 #' 
 #' @examples 
-#' get_color_list_shades(c('A', 'B', 'A', 'C', 'B'), F, c(3,4,5))
+#' get_color_list_shades(c('A', 'B', 'A', 'C', 'B'), shades_from = c('lavender', 'darkviolet'))
 #' @export
 get_color_list_shades <- function(vector_of_names, shades_from) {
   # get the unique entries
