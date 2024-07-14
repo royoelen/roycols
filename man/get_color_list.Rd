@@ -14,7 +14,7 @@ get_color_list(vector_of_names, use_sampling = F, color_indices = NULL)
 \item{color_indices}{(optional, not used by default) if specific colours are needed, supply the indices of the colours here. Use 'get_available_colours_grid' to get the colours and their indices}
 }
 \value{
-a vector of colours
+a list of each input value as name, and values of colours
 }
 \description{
 get a vector of as distinct possible colours, but with more possibilities ()
