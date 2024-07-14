@@ -151,7 +151,7 @@ get_available_colours_grid <- function(many=T, tons=F) {
 #' @param vector_of_names a vector of values for which you want colours
 #' @param use_sampling whether or not to randomly extract the colours instead of grabbing the first n colours
 #' @param color_indices (optional, not used by default) if specific colours are needed, supply the indices of the colours here. Use 'get_available_colours_grid' to get the colours and their indices
-#' @returns a vector of colours
+#' @returns a list of each input value as name, and values of colours
 #' 
 #' @examples 
 #' get_color_list(c('A', 'B', 'A', 'C', 'B'), F, c(3,4,5))
@@ -170,6 +170,110 @@ get_color_list <- function(vector_of_names, use_sampling=F, color_indices=NULL) 
   else{
     colors_to_use <- sample_many_colours(length(vector_unique), use_sampling = use_sampling, color_indices = color_indices)
   }
+  # turn into a list
+  colors_to_use_list <- as.list(colors_to_use)
+  # and add the names
+  names(colors_to_use_list) <- vector_unique
+  return(colors_to_use_list)
+}
+
+#' get a ggplot2 tile plot with the supplied colours
+#' 
+#' @param colours_to_plot a vector of values for which you want colours
+#' @returns a ggplot2 tile plot with the colours
+#' 
+#' @examples 
+#' plot_colours_in_grid(c('darkblue', 'navyblue', 'purple', 'lightblue'))
+#' @export
+plot_colours_in_grid <- function(colours_to_plot) {
+  # get how many colours we have
+  n_available_colours <- length(colours_to_plot)
+  # we need to put that into a square grid, so we need to get the square root, to know how many rows and columns
+  nrow_and_ncol <- sqrt(n_available_colours)
+  # and we need to round that up of course
+  nrow_and_ncol <- ceiling(nrow_and_ncol)
+  # so we'll have a total number of blocks
+  total_cells <- nrow_and_ncol * nrow_and_ncol
+  # let's see how many colours we are off from that number of cells
+  cells_no_colour_number <- total_cells - n_available_colours
+  # we will just add white for those
+  cells_no_colour <- rep('white', times = cells_no_colour_number)
+  # add that to the colours we have
+  colours_to_plot <- c(colours_to_plot, cells_no_colour)
+  # create each combination of x and y
+  indices_grid <- expand.grid(as.character(1 : nrow_and_ncol), as.character(1 : nrow_and_ncol))
+  # add the index and colour name
+  indices_grid[['index_colour']] <- paste(c(1:total_cells), colours_to_plot, sep = '\n')
+  # make mapping of colours
+  colours_to_use <- as.list(colours_to_plot)
+  names(colours_to_use) <- indices_grid[['index_colour']]
+  # now plot
+  p <- ggplot2::ggplot(data = indices_grid, mapping = ggplot2::aes(x = Var1, y = Var2, fill = index_colour)) + 
+    ggplot2::geom_tile() + 
+    ggplot2::geom_text(ggplot2::aes(label=index_colour)) + 
+    ggplot2::scale_fill_manual(values = colours_to_use) + 
+    ggplot2::theme(legend.position = 'none')
+  return(p)
+}
+
+#' get a vector of shades from a supplied vector of colours. Works best if the colours are ordered in a logical order, so yellow, orange, red for example
+#' 
+#' @param number_of_colours the number of colours to get
+#' @param shades_from vector of colours to compute shades from. Needs to have at least two colours.
+#' @returns a vector of colours
+#' 
+#' @examples 
+#' shades_between_red_yellow <- get_shades(10, c('yellow', 'orange', 'red'))
+#' @export
+get_shades <- function(number_of_colours, shades_from) {
+  # we can only get shades from at least two colors
+  if (length(shades_from) < 2) {
+    # error out
+    stop(paste('shades_from needs to be vector of at least two colors'))
+  }
+  else {
+    shades <- grDevices::colorRampPalette(colors = shades_from)(number_of_colours)
+    return(shades)
+  }
+}
+
+#' plot a vector of shades from a supplied vector of colours. Works best if the colours are ordered in a logical order, so yellow, orange, red for example
+#' 
+#' @param number_of_colours the number of colours to get
+#' @param shades_from vector of colours to compute shades from. Needs to have at least two colours.
+#' @returns a ggplot2 tile plot with the colours
+#' 
+#' @examples 
+#' plot_shades(10, c('yellow', 'orange', 'red'))
+#' @export
+plot_shades <- function(number_of_colours, shades_from) {
+  # we can only get shades from at least two colors
+  if (length(shades_from) < 2) {
+    # error out
+    stop(paste('shades_from needs to be vector of at least two colors'))
+  }
+  else {
+    shades <- grDevices::colorRampPalette(colors = shades_from)(number_of_colours)
+    plot_colours_in_grid(shades)
+  }
+}
+
+#' get a vector of as distinct possible colours, but with more possibilities ()
+#' 
+#' @param vector_of_names a vector of values for which you want colours
+#' @param shades_from vector of colours to compute shades from. Needs to have at least two colours.
+#' @returns a list of each input value as name, and values of colours
+#' 
+#' @examples 
+#' get_color_list_shades(c('A', 'B', 'A', 'C', 'B'), F, c(3,4,5))
+#' @export
+get_color_list_shades <- function(vector_of_names, shades_from) {
+  # get the unique entries
+  vector_unique <- unique(vector_of_names)
+  # remove any NA
+  vector_unique <- vector_unique[!is.na(vector_unique)]
+  # get some colors
+  colors_to_use <- get_shades(length(vector_unique), shades_from)
   # turn into a list
   colors_to_use_list <- as.list(colors_to_use)
   # and add the names
