@@ -164,7 +164,7 @@ get_color_list <- function(vector_of_names, use_sampling=F, color_indices=NULL) 
   vector_unique <- vector_unique[!is.na(vector_unique)]
   # get some colors
   colors_to_use <- NULL
-  if (length(vector_of_names) > 74) {
+  if (length(vector_unique) > 74) {
     colors_to_use <- sample_tons_of_colors(length(vector_unique), use_sampling = use_sampling, color_indices = color_indices)
   }
   else{
